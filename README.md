@@ -14,11 +14,11 @@ https://github.com/user-attachments/assets/1edca9a0-0b38-4025-9840-86c557379f0a
 1. **Download the extension files** or clone the repository:
    ```sh
    git clone https://github.com/your-repo-name/ai-web-summarizer.git
-### 2. Go to Chrome Extensions  
+2. **Go to Chrome Extensions**  
 - Open [`chrome://extensions/`](chrome://extensions/) in your browser  
 - Enable **Developer Mode** (toggle in the top right corner)  
 
-### 3. Load the extension  
+3. **Load the extension**  
 - Click **"Load Unpacked"**  
 - Select the folder containing the extension files  
 
@@ -40,6 +40,7 @@ This extension requires a Flask backend to process summaries.
 ### 1. Install dependencies  
    ```sh 
    pip install flask flask-cors huggingface_hub python-dotenv
+   ```
 
 ### 2. Set up the API Key  
 Create a `.env` file in the Flask project and add:  
@@ -52,11 +53,13 @@ To start the Flask backend, run:
 
 ```sh
 python server.py
+```
 
 ## Speech Synthesis Fix
 If "Read Aloud" does not work, try running this in Chrome DevTools (F12 > Console):
 
 ```sh
 speechSynthesis.speak(new SpeechSynthesisUtterance("Test speech synthesis."));
+```
 
 
