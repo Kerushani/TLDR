@@ -1,6 +1,6 @@
-# AI Web Summarizer - Chrome Extension
+# Web Summarizer - Chrome Extension
 
-A simple Chrome extension that extracts and summarizes text from a webpage using AI. It supports both **full-page summarization** and **selected text summarization**. Additionally, the extension can **read the summary aloud** using the Web Speech API.
+A simple Chrome extension that extracts and summarizes text from a webpage using AI. It supports both **full-page summarization** and **selected text summarization**. The extension can **read the summary aloud** using the Web Speech API.
 
 ---
 
