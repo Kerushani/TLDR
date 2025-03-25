@@ -2,6 +2,10 @@
 
 A simple Chrome extension that extracts and summarizes text from a webpage using AI. It supports both **full-page summarization** and **selected text summarization**. The extension can **read the summary aloud** using the Web Speech API.
 
+## Demo Video
+
+https://github.com/user-attachments/assets/1edca9a0-0b38-4025-9840-86c557379f0a
+
 ---
 
 ## Installation
@@ -52,4 +56,5 @@ If "Read Aloud" does not work, try running this in Chrome DevTools (F12 > Consol
 
 ```sh
 speechSynthesis.speak(new SpeechSynthesisUtterance("Test speech synthesis."));
+
 
