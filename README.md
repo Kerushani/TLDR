@@ -13,7 +13,7 @@ https://github.com/user-attachments/assets/1edca9a0-0b38-4025-9840-86c557379f0a
 ## Installation
 1. **Download the extension files** or clone the repository:
    ```sh
-   git clone https://github.com/your-repo-name/ai-web-summarizer.git
+   git clone git@github.com:Kerushani/chrome-extension.git
 2. **Go to Chrome Extensions**  
 - Open [`chrome://extensions/`](chrome://extensions/) in your browser  
 - Enable **Developer Mode** (toggle in the top right corner)  
