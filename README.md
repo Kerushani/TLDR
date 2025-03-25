@@ -47,6 +47,7 @@ Create a `.env` file in the Flask project and add:
 
 ```sh
 API_KEY=your-huggingface-api-key
+```
 
 ### 3. Run the Server  
 To start the Flask backend, run:  
