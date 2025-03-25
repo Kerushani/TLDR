@@ -53,7 +53,7 @@ API_KEY=your-huggingface-api-key
 To start the Flask backend, run:  
 
 ```sh
-python server.py
+python3 server.py
 ```
 
 ## Speech Synthesis Fix
