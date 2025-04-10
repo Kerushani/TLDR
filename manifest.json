@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Web Summarizer",
+  "name": "TLDR",
   "version": "1.0",
   "description": "Summarizes articles using AI.",
   "permissions": ["activeTab", "storage", "scripting"],

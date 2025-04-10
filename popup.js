@@ -15,33 +15,16 @@ document.getElementById("summarize").addEventListener("click", async () => {
         chrome.tabs.sendMessage(tab.id, { action: "summarize" }, async (response) => {
             if (chrome.runtime.lastError) {
                 console.error("Error:", chrome.runtime.lastError.message);
-                summaryElement.innerText = "Error: Content script not loaded. Try reloading the page.";
+                summaryElement.innerText = "Error: Content script not loaded. Reload page or wait a couple seconds for page to finish loading.";
                 return;
             }
 
-            if (!response || !response.text) {
+            if (!response || !response.summary) {
                 summaryElement.innerText = response?.error || "Failed to extract text.";
                 return;
             }
 
-            const apiResponse = await fetch("http://localhost:5000/summarize", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ text: response.text })
-            });
-
-            if (!apiResponse.ok) {
-                if (apiResponse.status === 500) {
-                    summaryElement.innerText = "Request failed. Document may be too long.";
-                    return;
-                }
-                throw new Error(`Server error: ${apiResponse.status}`);
-            }
-
-            const data = await apiResponse.json();
-
-            const summaryText = data.summary?.summary_text || data.summary || "No summary available.";
-            summaryElement.innerText = summaryText;
+            summaryElement.innerText = response.summary;
             readAloudButton.disabled = false; 
         });
     } catch (error) {
@@ -58,7 +41,7 @@ document.getElementById("readAloud").addEventListener("click", () => {
     if (isSpeaking) {
         speechSynthesis.cancel();
         isSpeaking = false;
-        document.getElementById("readAloud").innerText = "🔊 Read Aloud";
+        document.getElementById("readAloud").innerText = "Read Aloud";
     } else {
         speechUtterance = new SpeechSynthesisUtterance(summaryText);
         speechUtterance.rate = 1; 
@@ -71,12 +54,7 @@ document.getElementById("readAloud").addEventListener("click", () => {
         
         speechUtterance.onend = () => {
             isSpeaking = false;
-            document.getElementById("readAloud").innerText = "🔊 Read Aloud";
+            document.getElementById("readAloud").innerText = "Read Aloud";
         };
     }
 });
-
-
-
-
-

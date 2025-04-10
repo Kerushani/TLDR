@@ -1,22 +1,45 @@
-import { Ollama } from 'ollama'
+import express from "express";
+import cors from "cors";
+import { Ollama } from "ollama";
 
-let content = "BART model pre-trained on English language, and fine-tuned on CNN Daily Mail. It was introduced in the paper BART: Denoising Sequence-to-Sequence Pre-training for Natural Language Generation, Translation, and Comprehension by Lewis et al. and first released in [this repository (https://github.com/pytorch/fairseq/tree/master/examples/bart).Disclaimer: The team releasing BART did not write a model card for this model so this model card has been written by the Hugging Face team.Model description BART is a transformer encoder-encoder (seq2seq) model with a bidirectional (BERT-like) encoder and an autoregressive (GPT-like) decoder. BART is pre-trained by (1) corrupting text with an arbitrary noising function, and (2) learning a model to reconstruct the original text.BART is particularly effective when fine-tuned for text generation (e.g. summarization, translation) but also works well for comprehension tasks (e.g. text classification, question answering). This particular checkpoint has been fine-tuned on CNN Daily Mail, a large collection of text-summary pairs."
+const app = express();
+app.use(express.json());
+app.use(cors());
 
-const summarize = async (content, showThinking = false) => {
-    const ollama = new Ollama({ host: 'http://127.0.0.1:11434' })
-    const prompt = "Please provide a concise summary of the following content:" 
-    const response = await ollama.chat({
-      model: 'deepseek-r1:1.5b',
-      messages: [{ role: 'user', content: `${prompt} ${content}` }],
-    })
-    const messageContent = response.message.content
-    if (showThinking == true){
-        return messageContent
-    } else {
-        // return messageContent.replace(/<\s*think\s*>[\s\S]*<\s*\/\s*think\s*>/gi, '')
-        // return messageContent.split("</think>", 1)[1];
-        return messageContent.split("</think>", 2)[1];
+const ollama = new Ollama();
+
+app.post("/summarize", async (req, res) => {
+    try {
+        const { text } = req.body;
+        if (!text) {
+            return res.status(400).json({ error: "Text is required - try selecting the text you want to summarize." });
+        }
+
+        console.log("Text being sent to BART:", text);
+
+        const response = await ollama.chat({
+            model: "deepseek-r1:1.5b",
+            messages: [{ role: "user", content: `Summarize this text in 2-3 sentences: ${text}` }],
+        });
+
+        console.log("Server esponse from BART:", response);
+
+        if (!response || !response.message || !response.message.content || response.message.content.trim() === "{}") {
+            return res.status(500).json({ error: "Unexpected response from BART. Try again with a shorter text." });
+        }
+
+        let summary = response.message.content.trim();
+
+        if(summary.includes("</think")){
+            summary = summary.split("</think>", 2)[1]?.trim() || summary; 
+        }
+
+        res.json({ summary });
+
+    } catch (error) {
+        console.error("Threw an error:", error);
+        res.status(500).json({ error: "BART cannot summarize", details: error.message });
     }
-}
-const response = await summarize(content)
-console.log(response)
+});
+
+app.listen(5000, () => console.log("Server running on port 5000"));

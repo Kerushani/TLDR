@@ -1,4 +1,4 @@
-# Web Summarizer - Chrome Extension
+# TLDR - Chrome Extension
 
 A Chrome extension that extracts and summarizes text from any webpage using the **BART (large) model**.  
 
@@ -34,33 +34,51 @@ https://github.com/user-attachments/assets/1edca9a0-0b38-4025-9840-86c557379f0a
 
 ---
 
-## Backend Setup (Flask Server)  
-This extension requires a Flask backend to process summaries.  
+## Backend Setup (Node.js + Ollama)
 
-### 1. Install dependencies  
-   ```sh 
-   pip install flask flask-cors huggingface_hub python-dotenv
-   ```
+This project uses [Ollama](https://ollama.com) to run the `deepseek-r1` large language model (LLM) **locally**, with an Express.js backend acting as the middleman between your frontend and the LLM.
 
-### 2. Set up the API Key  
-Create a `.env` file in the Flask project and add:  
+### Prerequisites
 
-```sh
-API_KEY=your-huggingface-api-key
+- [Node.js](https://nodejs.org/) installed
+- [Ollama](https://ollama.com/download) installed (macOS, Linux, or Windows)
+
+---
+
+### Step 1: Install Ollama
+
+Download and install Ollama for your OS from the official site:
+
+https://ollama.com/download
+
+After installing, verify the CLI is available:
+
+```bash
+ollama --version
 ```
 
-### 3. Run the Server  
-To start the Flask backend, run:  
+### Step 2: Run the DeepSeek-R1 Model
 
-```sh
-python3 server.py
+We're using the `deepseek-r1` model — a powerful.
+
+To download and launch it, run:
+
+```bash
+ollama run deepseek-r1
+```
+### Step 3: Run the Node Backend
+
+Install dependencies:
+
+```bash
+npm install
 ```
 
-## Speech Synthesis Fix
-If "Read Aloud" does not work, try running this in Chrome DevTools (F12 > Console):
-
-```sh
-speechSynthesis.speak(new SpeechSynthesisUtterance("Test speech synthesis."));
+Install dependencies:
+```bash
+node server.js
 ```
-
-
+The server will be running at:
+```bash
+http://localhost:5000
+```
