@@ -6,7 +6,7 @@ The extension also has a **"Read Aloud"** function using the **Web Speech API**.
 
 ## Demo Video
 
-https://github.com/user-attachments/assets/1edca9a0-0b38-4025-9840-86c557379f0a
+https://github.com/user-attachments/assets/f2e74fc5-7912-4da7-9d6b-4f9edd5be9b7
 
 ---
 
