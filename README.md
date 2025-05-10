@@ -1,6 +1,6 @@
 # TLDR - Chrome Extension
 
-A Chrome extension that extracts and summarizes text from any webpage using the **BART (large) model**.  
+A Chrome extension that extracts and summarizes text from any webpage using DeepSeek-r1.
 
 The extension also has a **"Read Aloud"** function using the **Web Speech API**. 
 
