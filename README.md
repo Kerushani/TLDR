@@ -59,8 +59,6 @@ ollama --version
 
 ### Step 2: Run the DeepSeek-R1 Model
 
-We're using the `deepseek-r1` model — a powerful.
-
 To download and launch it, run:
 
 ```bash
