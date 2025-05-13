@@ -38,11 +38,6 @@ https://github.com/user-attachments/assets/f2e74fc5-7912-4da7-9d6b-4f9edd5be9b7
 
 This project uses [Ollama](https://ollama.com) to run the `deepseek-r1` large language model (LLM) **locally**, with an Express.js backend acting as the middleman between your frontend and the LLM.
 
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) installed
-- [Ollama](https://ollama.com/download) installed (macOS, Linux, or Windows)
-
 ---
 
 ### Step 1: Install Ollama
