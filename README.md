@@ -2,7 +2,7 @@
 
 A Chrome extension that extracts and summarizes text from any webpage using DeepSeek-r1.
 
-The extension also has a **"Read Aloud"** function using the **Web Speech API**. 
+The extension also has a "Read Aloud" function using the Web Speech API. 
 
 ## Demo Video
 
@@ -11,7 +11,7 @@ https://github.com/user-attachments/assets/f2e74fc5-7912-4da7-9d6b-4f9edd5be9b7
 ---
 
 ## Installation
-1. **Download the extension files** or clone the repository:
+1. Download the extension files or clone the repository:
    ```sh
    git clone git@github.com:Kerushani/chrome-extension.git
 2. **Go to Chrome Extensions**  
@@ -19,7 +19,7 @@ https://github.com/user-attachments/assets/f2e74fc5-7912-4da7-9d6b-4f9edd5be9b7
 - Enable **Developer Mode** (toggle in the top right corner)  
 
 3. **Load the extension**  
-- Click **"Load Unpacked"**  
+- Click "Load Unpacked"
 - Select the folder containing the extension files  
 
 ---
@@ -27,10 +27,10 @@ https://github.com/user-attachments/assets/f2e74fc5-7912-4da7-9d6b-4f9edd5be9b7
 ## How to Use  
 1. Visit any website or article  
 2. **Click the extension icon** in the toolbar  
-3. **Click "Summarize"**:  
-   - If you **highlight text** → Only the selection is summarized  
-   - If **no text is highlighted** → The full page is summarized  
-4. **Click "Read Aloud"** to hear the summary  
+3. Click "Summarize":  
+   - If you highlight text → Only the selection is summarized  
+   - If no text is highlighted → The full page is summarized  
+4. Click "Read Aloud" to hear the summary  
 
 ---
 
