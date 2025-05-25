@@ -31,6 +31,7 @@ https://github.com/user-attachments/assets/f2e74fc5-7912-4da7-9d6b-4f9edd5be9b7
 
 Install Ollama from their website: https://ollama.com/download
 
+Then,
 ```bash
 ollama --version
 ```
