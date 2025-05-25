@@ -43,5 +43,4 @@ ollama run deepseek-r1
 ```bash
 npm install
 node server.js
-http://localhost:5000
 ```
