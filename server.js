@@ -15,21 +15,22 @@ app.post("/summarize", async (req, res) => {
             return res.status(400).json({ error: "Text is required - try selecting the text you want to summarize." });
         }
 
-        console.log("Text being sent to BART:", text);
+        console.log("Text being sent:", text);
 
         const response = await ollama.chat({
             model: "deepseek-r1:1.5b",
             messages: [{ role: "user", content: `Summarize this text in 2-3 sentences: ${text}` }],
         });
 
-        console.log("Server esponse from BART:", response);
+        console.log("Server response:", response);
 
         if (!response || !response.message || !response.message.content || response.message.content.trim() === "{}") {
-            return res.status(500).json({ error: "Unexpected response from BART. Try again with a shorter text." });
+            return res.status(500).json({ error: "Unexpected response. Try again with a shorter text." });
         }
 
         let summary = response.message.content.trim();
 
+        // response has </think></think> so it is removed
         if(summary.includes("</think")){
             summary = summary.split("</think>", 2)[1]?.trim() || summary; 
         }

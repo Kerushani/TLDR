@@ -1,11 +1,16 @@
+// Takes extracted text and POST to server. Waits for a response to send back to where the message came from
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === "summarize") {
         let selectedText = window.getSelection().toString().trim();
+
+        // sets text to either be selected text or all text on the webpage
         let text = selectedText || document.body.innerText.trim();
 
-        console.log("Text being sent to BART:", text);
+        console.log("Text being sent:", text);
 
         if (text.length > 0) {
+            // text is POST to the server -> refer to server.js
             fetch("http://localhost:3000/summarize", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -13,12 +18,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log("Raw Data from BART:", data);
+                    console.log("Raw Data from Ollama:", data);
 
                     let summaryText = data.summary;
 
+                    // incoming data is JSON -> must clean it up before sending response back to extension
                     if (typeof summaryText === "string" && summaryText.startsWith("{")) {
                         try {
+                            // parse() -> Converts a JavaScript Object Notation (JSON) string into an object
                             let parsed = JSON.parse(summaryText);
                             if (parsed && typeof parsed === "object") {
                                 summaryText = parsed.summary || summaryText;
