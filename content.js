@@ -6,7 +6,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         console.log("Text being sent to BART:", text);
 
         if (text.length > 0) {
-            fetch("http://localhost:5000/summarize", {
+            fetch("http://localhost:3000/summarize", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ text }),

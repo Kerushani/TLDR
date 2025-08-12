@@ -7,6 +7,7 @@
   },
   "name": "chrome-extension",
   "version": "1.0.0",
+  "type": "module",
   "description": "A Chrome extension that extracts and summarizes text from any webpage using the **BART (large) model**.",
   "main": "content.js",
   "scripts": {
