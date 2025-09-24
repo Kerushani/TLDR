@@ -1,9 +1,11 @@
 {
   "dependencies": {
+    "@google/genai": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "ollama": "^0.5.14"
+    "ollama": "^0.5.14",
+    "undici": "^7.16.0"
   },
   "name": "chrome-extension",
   "version": "1.0.0",
