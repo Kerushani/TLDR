@@ -8,7 +8,7 @@ app.use(express.json({limit:"1mb"}));
 app.use(cors())
 
 // gemini client
-const GEMINI_API_KEY = "AIzaSyCwq3hsp1biEET12z4oiYiN2HaB_68m4Xc"
+const GEMINI_API_KEY = ""
 if(!GEMINI_API_KEY){
     console.log("missing Gemini API key")
 }

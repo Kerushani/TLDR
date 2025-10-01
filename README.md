@@ -4,6 +4,14 @@ A Chrome extension that extracts and summarizes text (whole page or highlighted 
 
 The extension also has a "Read Aloud" function using the Web Speech API. 
 
+---
+V2: Uses Gemini API
+
+Why make the change: Ollama was used before because it ran locally on your computer.
+
+
+---
+V1
 ## Demo Video
 
 https://github.com/user-attachments/assets/f2e74fc5-7912-4da7-9d6b-4f9edd5be9b7

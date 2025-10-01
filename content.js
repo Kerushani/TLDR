@@ -15,6 +15,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         case "focusMode":
             handleFocusMode(sendResponse);
             break;
+        case "extractText": {
+            const selectedText = window.getSelection().toString().trim();
+            const text = selectedText || document.body.innerText.trim();
+            const isSelectedText = selectedText.length > 0;
+            sendResponse({ text, isSelectedText });
+            break;
+        }
         default:
             sendResponse({ error: "Unknown action" });
     }
