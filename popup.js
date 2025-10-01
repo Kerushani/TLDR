@@ -48,6 +48,7 @@ async function handleSummarize() {
     const summaryElement = document.getElementById("summary");
     const readAloudButton = document.getElementById("readAloud");
     const summarizeButton = document.getElementById("summarize");
+    console.log("we checking if this works")
 
     summaryElement.innerHTML = `
         <div class="loading">
@@ -180,110 +181,36 @@ function handleReadAloud() {
 
 function handleNotes() {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        const tabId = tabs[0].id;
-        const pageUrl = tabs[0].url;
-        const pageTitle = tabs[0].title;
-
-        // Ask content script for selected or full text
-        chrome.tabs.sendMessage(tabId, { action: "extractText" }, async (response) => {
-            const text = response?.text || '';
-
-            // Build prompts via gemini-server using keypoints and exec
-            let keypoints = '';
-            let execBrief = '';
-            try {
-                const [kpRes, execRes] = await Promise.all([
-                    fetch("http://localhost:3000/summarize", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ text, mode: "keypoints" })
-                    }).then(r => r.json()),
-                    fetch("http://localhost:3000/summarize", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ text, mode: "exec" })
-                    }).then(r => r.json())
-                ]);
-
-                keypoints = kpRes.summary || '';
-                execBrief = execRes.summary || '';
-            } catch (e) {
-                keypoints = "- Unable to generate key points.";
-                execBrief = "Unable to generate executive summary.";
-            }
-
-            // Render a printable HTML with markdown-like styling and a print-to-PDF option
-            const encoded = encodeURIComponent(`
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Notes - ${pageTitle}</title>
-    <style>
-      body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color:#111; background:#fafafa; margin:0; }
-      .container { max-width: 900px; margin: 40px auto; padding: 32px; background:#fff; border:1px solid #eee; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.06); }
-      .topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px; }
-      .meta { color:#666; font-size:13px; }
-      h1 { font-size: 26px; margin: 12px 0 8px; }
-      h2 { font-size: 18px; margin: 24px 0 8px; }
-      p, li { line-height: 1.6; }
-      pre { background:#0f172a; color:#e2e8f0; padding: 14px; border-radius:8px; overflow:auto; }
-      code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background:#f4f4f5; padding:2px 6px; border-radius:6px; }
-      .pill { display:inline-block; padding:4px 10px; border-radius:9999px; border:1px solid #e5e7eb; background:#f8fafc; color:#334155; font-size:12px; }
-      .toolbar { display:flex; gap:8px; }
-      .btn { border:1px solid #e5e7eb; background:#111; color:#fff; padding:8px 12px; border-radius:8px; cursor:pointer; font-size:13px; }
-      .btn.outline { background:#fff; color:#111; }
-      .card { border:1px solid #e5e7eb; border-radius:10px; padding:16px; background:#fff; }
-      .grid { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
-      @media (max-width: 800px){ .grid{ grid-template-columns:1fr; } }
-      hr { border: none; border-top: 1px solid #eee; margin: 20px 0; }
-      ul { padding-left: 18px; }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-       <div class="topbar">
-         <div>
-           <div class="pill">Notes</div>
-           <h1>${pageTitle}</h1>
-           <div class="meta">Source: <a href="${pageUrl}">${pageUrl}</a></div>
-         </div>
-         <div class="toolbar">
-           <button class="btn" onclick="window.print()">Download PDF</button>
-           <button class="btn outline" onclick="copyMarkdown()">Copy Markdown</button>
-         </div>
-       </div>
-
-       <div class="grid">
-         <div class="card">
-           <h2>Key Points</h2>
-           <div id="kp">${keypoints.replace(/</g,'&lt;')}</div>
-         </div>
-         <div class="card">
-           <h2>Executive Summary</h2>
-           <div id="exec">${execBrief.replace(/</g,'&lt;')}</div>
-         </div>
-       </div>
-
-       <hr />
-       <h2>Raw Extracted Text</h2>
-       <div class="card" style="white-space:pre-wrap">${(text || '').substring(0, 20000).replace(/</g,'&lt;')}</div>
-    </div>
-
-    <script>
-      function copyMarkdown(){
-        const md = `# ${pageTitle}\n\n## Key Points\n${keypoints}\n\n## Executive Summary\n${execBrief}`;
-        navigator.clipboard.writeText(md).then(()=>alert('Markdown copied to clipboard'));
-      }
-      // Use print styles to export to PDF via browser print dialog
-      const style = document.createElement('style');
-      style.textContent = `@media print { body{background:#fff} .btn,.pill,.toolbar,.meta a{ display:none!important } .container{ box-shadow:none; border:none; } }`;
-      document.head.appendChild(style);
-    </script>
-  </body>
-</html>`);
-
-            chrome.tabs.create({ url: `data:text/html;charset=utf-8,${encoded}` });
+        const url = tabs[0].url;
+        const title = tabs[0].title;
+        
+        chrome.tabs.create({
+            url: `data:text/html,
+                <html>
+                    <head><title>Notes - ${title}</title></head>
+                    <body style="font-family: Inter, sans-serif; padding: 20px; background: #f8fafc;">
+                        <h1 style="color: #37352f;">Notes</h1>
+                        <p><strong>Page:</strong> ${title}</p>
+                        <p><strong>URL:</strong> <a href="${url}">${url}</a></p>
+                        <hr>
+                        <h2>Your Notes:</h2>
+                        <textarea style="width: 100%; height: 300px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; font-family: Inter;"></textarea>
+                        <br><br>
+                        <button onclick="saveNotes()" style="background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Save Notes</button>
+                        <script>
+                            function saveNotes() {
+                                const notes = document.querySelector('textarea').value;
+                                localStorage.setItem('studynotes_' + '${url}', notes);
+                                alert('Notes saved!');
+                            }
+                            // Load existing notes
+                            const savedNotes = localStorage.getItem('studynotes_' + '${url}');
+                            if (savedNotes) {
+                                document.querySelector('textarea').value = savedNotes;
+                            }
+                        </script>
+                    </body>
+                </html>`
         });
     });
 }

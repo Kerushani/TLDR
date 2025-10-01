@@ -7,7 +7,6 @@ const app = express();
 app.use(express.json({limit:"1mb"}));
 app.use(cors())
 
-// gemini client
 const GEMINI_API_KEY = ""
 if(!GEMINI_API_KEY){
     console.log("missing Gemini API key")
@@ -29,7 +28,6 @@ const buildPrompt = (mode, text) => {
     }
 }
 
-// non-steaming -> user sees a spinner
 
 app.post("/summarize", async(req,res) => {
     try {
