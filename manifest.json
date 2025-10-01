@@ -1,12 +1,13 @@
 {
   "manifest_version": 3,
   "name": "TLDR",
-  "version": "1.0",
-  "description": "Summarizes articles using AI.",
-  "permissions": ["activeTab", "storage", "scripting"],
+  "version": "2.0",
+  "description": "AI-powered productivity extension for students and professionals. Summarize content, take notes, bookmark pages, and boost your learning efficiency.",
+  "permissions": ["activeTab", "storage", "scripting", "bookmarks", "tabs"],
   "host_permissions": ["https://*/*", "http://*/*"],
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_title": "TLDR"
   },
   "content_scripts": [
     {

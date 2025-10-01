@@ -8,7 +8,7 @@ app.use(express.json({limit:"1mb"}));
 app.use(cors())
 
 // gemini client
-const GEMINI_API_KEY = ""
+const GEMINI_API_KEY = "AIzaSyCwq3hsp1biEET12z4oiYiN2HaB_68m4Xc"
 if(!GEMINI_API_KEY){
     console.log("missing Gemini API key")
 }
@@ -80,14 +80,3 @@ app.post("/summarize", async(req,res) => {
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => console.log(`Gemini server running on port ${PORT}`))
-
-// async function main() {
-//     const response = await ai.models.generateContent({
-//         model:"gemini-2.5-flash",
-//         contents: "Explain how AI works in a few words",
-//     });
-
-//     console.log(response.text);
-// }
-
-// await main();
