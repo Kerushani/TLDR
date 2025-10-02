@@ -125,49 +125,51 @@ function handleFocusMode(sendResponse) {
 
 
 function showNotification(title, message) {
-    const existing = document.getElementById('studynub-notification');
-    if (existing) {
-        existing.remove();
-    }
-    
-    const notification = document.createElement('div');
-    notification.id = 'studynub-notification';
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-        color: white;
-        padding: 16px 20px;
-        border-radius: 12px;
-        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
-        z-index: 10000;
-        font-family: Inter, sans-serif;
-        font-size: 14px;
-        max-width: 300px;
-        animation: slideIn 0.3s ease;
+    const container = document.getElementById("notificationArea");
+    if (!container) return;
+  
+    container.innerHTML = "";
+  
+    const card = document.createElement("div");
+    card.style.cssText = `
+      margin: 8px 0;
+      padding: 14px 18px;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(59,130,246,0.25);
+      font-family: Inter, sans-serif;
+      font-size: 14px;
+      animation: fadeIn 0.25s ease;
     `;
-    
-    notification.innerHTML = `
-        <div style="font-weight: 600; margin-bottom: 4px;">${title}</div>
-        <div style="opacity: 0.9; font-size: 12px;">${message}</div>
+  
+    card.innerHTML = `
+      <div style="font-weight:600; margin-bottom:4px;">${title}</div>
+      <div style="opacity:0.9; font-size:12px;">${message}</div>
     `;
-    
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-    `;
-    document.head.appendChild(style);
-    
-    document.body.appendChild(notification);
-    
+  
+    container.appendChild(card);
+
     setTimeout(() => {
-        if (notification.parentNode) {
-            notification.style.animation = 'slideIn 0.3s ease reverse';
-            setTimeout(() => notification.remove(), 300);
-        }
+      if (card.parentNode) {
+        card.style.animation = "fadeOut 0.25s ease forwards";
+        setTimeout(() => card.remove(), 250);
+      }
     }, 3000);
-}
+  
+    if (!document.getElementById("notif-style")) {
+      const style = document.createElement("style");
+      style.id = "notif-style";
+      style.textContent = `
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-6px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeOut {
+          from { opacity: 1; transform: translateY(0); }
+          to { opacity: 0; transform: translateY(-6px); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }  

@@ -18,11 +18,11 @@ const DEFAULT_MODEL = "gemini-2.5-flash"
 const buildPrompt = (mode, text) => {
     switch(mode){
         case "keypoints":
-            return `Summerize into 5-7 concise bullet points with short evidence quotes.\n\n${text}`;
+            return `Summerize into 5-7 concise bullet points with short evidence quotes. Each bullet should cover a single important idea. Include key names, numbers, or quotes if they support understanding. Do not write in full paragraphs.\n\n${text}`;
         case "actions":
             return `Extract action items. Return strict JSON: {"actions":[{"title":string,"owner":string|null,"due":string|null}]}\n\n${text}}`;
         case "exec":
-            return `Write an executive brief (5 bullets + conclusion).\n\n${text}`;
+            return `Write an executive brief. 3–4 sentences only. Provide the central theme and major insights. Write in clear, natural language as if briefing a busy executive.\n${text}`;
         default:
             return `Summarize in 2-3 sentences:\n\n${text}`
     }

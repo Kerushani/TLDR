@@ -41,8 +41,50 @@ function setupEventListeners() {
     document.getElementById("notesCard").addEventListener("click", handleNotes);
     document.getElementById("focusCard").addEventListener("click", handleFocusMode);
     
-    document.getElementById("exportBtn").addEventListener("click", handleExport);
 }
+
+function formatToBulletHTML(raw = "") {
+    let s = String(raw).replace(/\r\n/g, "\n").trim();
+  
+    const firstBullet = s.search(/(^|\n)\s*(?:[-*]|\d+[.)])\s+/);
+    if (firstBullet > 0) s = s.slice(firstBullet).trim();
+  
+    const lines = s.split("\n").map(l => l.trim()).filter(Boolean);
+    const items = [];
+    for (const line of lines) {
+      const m = line.match(/^(?:[-*]|\d+[.)])\s+(.*)$/);
+      if (m) {
+        items.push(m[1]);
+      } else if (items.length) {
+        items[items.length - 1] += " " + line;
+      }
+    }
+  
+    if (!items.length) return `<p>${escapeHtml(s)}</p>`;
+  
+    const md = (t) =>
+      escapeHtml(t)
+        .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+        .replace(/`([^`]+)`/g, "<code>$1</code>");
+  
+    return `<ul class="tldr-list">${items.map(li => `<li>${md(li)}</li>`).join("")}</ul>`;
+  }
+  
+  function escapeHtml(x = "") {
+    return x.replace(/[&<>"']/g, (m) => ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[m]));
+  }
+  
+  (function ensureListStyles(){
+    if (document.getElementById("tldr-list-styles")) return;
+    const style = document.createElement("style");
+    style.id = "tldr-list-styles";
+    style.textContent = `
+      .result-text .tldr-list { margin: 0; padding-left: 1.2em; }
+      .result-text .tldr-list li { margin: 6px 0; line-height: 1.5; }
+      .result-text code { background:#f4f4f5; padding:2px 6px; border-radius:6px; }
+    `;
+    document.head.appendChild(style);
+  })();
 
 async function handleSummarize() {
     const summaryElement = document.getElementById("summary");
@@ -105,7 +147,6 @@ async function handleSummarize() {
                 summaryElement.innerHTML = `
                     <div class="selected-text-notification">
                         <div class="notification-indicator"></div>
-                        <div class="notification-icon">S</div>
                         <div class="notification-content">
                             <div class="notification-title">Selected Text Summary</div>
                             <div class="notification-subtitle">Summarizing highlighted content from the page</div>
@@ -134,7 +175,7 @@ async function handleSummarize() {
         console.error("Summarization failed:", error);
         summaryElement.innerHTML = `
             <div class="result-text">
-                <strong>Error:</strong> Unable to connect to the AI service.
+                <strong>Error:</strong> Unable to connect to the summarizing service.
             </div>
         `;
         readAloudButton.disabled = true;
@@ -179,41 +220,95 @@ function handleReadAloud() {
     }
 }
 
+function showNotificationMessage(msg) {
+    const container = document.getElementById("notificationArea");
+    if (!container) return;
+  
+    container.innerHTML = `
+      <div style="
+        margin:8px 0; padding:10px 14px;
+        background:#f0f9ff; border:1px solid #bae6fd;
+        border-radius:8px; font-size:13px; color:#0369a1;s
+        font-family: Inter, sans-serif;">
+        ${msg}
+      </div>
+    `;
+  }
+
 function handleNotes() {
+    showNotificationMessage("Notes are being generated...")
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        const url = tabs[0].url;
-        const title = tabs[0].title;
-        
-        chrome.tabs.create({
-            url: `data:text/html,
-                <html>
-                    <head><title>Notes - ${title}</title></head>
-                    <body style="font-family: Inter, sans-serif; padding: 20px; background: #f8fafc;">
-                        <h1 style="color: #37352f;">Notes</h1>
-                        <p><strong>Page:</strong> ${title}</p>
-                        <p><strong>URL:</strong> <a href="${url}">${url}</a></p>
-                        <hr>
-                        <h2>Your Notes:</h2>
-                        <textarea style="width: 100%; height: 300px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; font-family: Inter;"></textarea>
-                        <br><br>
-                        <button onclick="saveNotes()" style="background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Save Notes</button>
-                        <script>
-                            function saveNotes() {
-                                const notes = document.querySelector('textarea').value;
-                                localStorage.setItem('studynotes_' + '${url}', notes);
-                                alert('Notes saved!');
-                            }
-                            // Load existing notes
-                            const savedNotes = localStorage.getItem('studynotes_' + '${url}');
-                            if (savedNotes) {
-                                document.querySelector('textarea').value = savedNotes;
-                            }
-                        </script>
-                    </body>
-                </html>`
-        });
+      const url = tabs[0].url;
+      const title = tabs[0].title;
+  
+      chrome.tabs.sendMessage(tabs[0].id, { action: "extractText" }, async (response) => {
+        const text = response?.text || "";
+  
+        let keypoints = "";
+        let execBrief = "";
+  
+        try {
+          const [kpRes, execRes] = await Promise.all([
+            fetch("http://localhost:3000/summarize", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ text, mode: "keypoints" })
+            }).then(r => r.json()),
+            fetch("http://localhost:3000/summarize", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ text, mode: "exec" })
+            }).then(r => r.json())
+          ]);
+          keypoints = kpRes.summary || "";
+          execBrief = execRes.summary|| "";
+        } catch {
+          keypoints = "- Unable to generate key points.";
+          execBrief = "Unable to generate executive summary.";
+        }
+        showNotificationMessage("Notes opened in a new tab");
+        const encoded = encodeURIComponent(`
+  <!doctype html>
+  <html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Notes - ${title}</title>
+    <style>
+      body { font-family: Inter, sans-serif; padding: 32px; background: #fafafa; color:#111; }
+      .container { max-width: 800px; margin:auto; background:#fff; padding:24px; border-radius:12px; }
+      h1 { font-size: 24px; margin-bottom: 8px; }
+      h2 { font-size: 18px; margin-top: 20px; }
+      .meta { color:#555; font-size:13px; margin-bottom: 20px; }
+      .btn { padding: 8px 12px; border:none; border-radius:6px; background:#3b82f6; color:white; cursor:pointer; }
+      @media print { .btn { display:none !important; } body { background:#fff; } .container { box-shadow:none; } }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+        <button class="btn" onclick="window.print()">Download PDF</button>
+      <h1>${title}</h1>
+      <div class="meta">Source: <a href="${url}">${url}</a></div>
+  
+      <h2>Key Points</h2>
+      <div>${formatToBulletHTML(keypoints)}</div>
+  
+      <h2>Executive Summary</h2>
+      <div>${formatToBulletHTML(execBrief)}</div>
+  
+      <h2>Raw Extracted Text</h2>
+      <div style="white-space:pre-wrap; border:1px solid #eee; padding:12px; border-radius:8px;">
+        ${(text || "").substring(0, 20000).replace(/</g, "&lt;")}
+      </div>
+  
+      <br>
+    </div>
+  </body>
+  </html>`);
+  
+        chrome.tabs.create({ url: `data:text/html;charset=utf-8,${encoded}` });
+      });
     });
-}
+  }  
 
 function handleFocusMode() {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -240,27 +335,6 @@ function handleFocusMode() {
     });
 }
 
-
-function handleExport() {
-    const summaryText = document.getElementById("summary").querySelector('.result-text')?.textContent;
-    
-    if (!summaryText || summaryText.includes("Your AI-generated summary")) {
-        alert("Please generate a summary first!");
-        return;
-    }
-    
-    const blob = new Blob([summaryText], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `studynotes_${new Date().toISOString().split('T')[0]}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
-    showFeedback("exportBtn", "Exported!");
-}
 
 function showFeedback(buttonId, message) {
     const button = document.getElementById(buttonId);
