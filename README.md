@@ -9,7 +9,7 @@ V2: Uses Gemini API
 
 Why make the change: Ollama was used before because it ran locally on your computer.
 
-https://github.com/user-attachments/assets/f36ee40c-ed2b-4029-81d9-e2946d95a25d
+https://github.com/user-attachments/assets/d53124da-b1e5-4162-82c4-122df1580972
 
 ---
 V1
