@@ -7,7 +7,6 @@ The extension also has a "Read Aloud" function using the Web Speech API.
 ---
 V2: Uses Gemini API
 
-Why make the change: Ollama was used before because it ran locally on your computer.
 
 https://github.com/user-attachments/assets/d53124da-b1e5-4162-82c4-122df1580972
 
