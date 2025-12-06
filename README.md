@@ -1,6 +1,6 @@
 # TLDR - Chrome Extension
 
-A Chrome extension that extracts and summarizes text (whole page or highlighted text) from any webpage using DeepSeek-r1.
+A Chrome extension that extracts and summarizes text (whole page or highlighted text) from any webpage using an LLM API.
 
 The extension also has a "Read Aloud" function using the Web Speech API. 
 
